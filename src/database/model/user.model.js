@@ -46,6 +46,10 @@ const userSchema = new Schema(
     coverImg: {
       type: String,
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
