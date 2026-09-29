@@ -1,15 +1,32 @@
 import { Router } from "express";
-import { signIn, signIn, signUp } from "./auth.service.js";
+import { getUsetById, signIn, signIn, signUp } from "./auth.service.js";
+import { auth } from "../../common/services/token.srevice.js";
 
 const router = Router();
 
-router.post("/signup", async (req, res) => {
-  const data = await signUp(req.body);
-  res.json(data);
+router.post("/signup", async (req, res, next) => {
+  try {
+    const user = await signUp(req.body);
+    res.status(201).json({ status: "success", user });
+  } catch (error) {
+    next(error);
+  }
 });
 router.post("/signin", async (req, res) => {
-  const data = await signIn(req.body);
-  res.json(data);
+ try {
+  const user = await signIn(req.body);
+  res.status(200).json({ status: "success", user });
+ } catch (error) {
+  next(error);
+ }
 });
 
+router.get("/get-user-by-id", auth , async (req, res,next) => {
+  try {
+    const user = await getUsetById(req.user.id);
+    res.status(200).json({ status: "success", user });
+  } catch (error) {
+    next()
+  }
+})
 export default router;
