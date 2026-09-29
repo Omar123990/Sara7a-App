@@ -49,6 +49,6 @@ export const signIn = async (body) => {
 };
 
 export const getUsetById = async(id)=>{
-  let user = await userModel.find();
+  let user = await userModel.findById(id);
   return user
 }

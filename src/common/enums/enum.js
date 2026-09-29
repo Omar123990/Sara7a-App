@@ -1,13 +1,12 @@
 export const roleEnum = {
-  user: "user",
-  admin: "admin",
+  user: 0,
+  admin: 1,
 };
 export const genderEnum = {
-  male: "male",
-  female: "female",
+  male: 0,
+  female: 1,
 };
 export const providerEnum = {
-  email: "email",
-  google: "google",
+  email: 0,
+  google: 1,
 };
-

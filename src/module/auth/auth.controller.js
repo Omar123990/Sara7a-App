@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUsetById, signIn, signIn, signUp } from "./auth.service.js";
+import { getUsetById, signIn, signUp } from "./auth.service.js";
 import { auth } from "../../common/services/token.srevice.js";
 
 const router = Router();
