@@ -1,16 +1,20 @@
-import { createError } from "../../common/errors/appError.js";
+import {
+  BadRequestException,
+  ConflictException,
+  ErrorResponse,
+} from "../../common/errors/appError.js";
 import { compareHash, generateHash } from "../../common/index.js";
 import { env } from "../../config/env.service.js";
 import { userModel } from "./../../database/model/user.model.js";
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 export const signUp = async (body) => {
   let { name, email, password, rePassword, age, gender, phone } = body;
   if (password != rePassword) {
-    throw createError("Password doesn't match", 400);
+    throw BadRequestException({ message: "Password not match" });
   }
   let exsistedEmail = await userModel.findOne({ email });
   if (exsistedEmail) {
-    throw createError("Email already exists", 400);
+    throw ConflictException({ message: "Email already exists" });
   } else {
     const hashedPassword = await generateHash({ planText: password });
     if (hashedPassword) {
@@ -24,7 +28,7 @@ export const signUp = async (body) => {
       });
       return user;
     } else {
-      throw createError("Something went wrong", 500);
+      throw ErrorResponse();
     }
   }
 };
@@ -38,17 +42,13 @@ export const signIn = async (body) => {
       hashedPassword: user.password,
     });
     if (isValidPassword) {
-      let token = jwt.sign({id:user._id},env.token_key)
+      let token = jwt.sign({ id: user._id }, env.token_key);
       return token;
     } else {
-      throw createError("Invalid password", 400);
+      throw BadRequestException({ message: "Invalid password" });
     }
   } else {
-    throw createError("User not found", 404);
+    throw BadRequestException({ message: "user not found" });
   }
 };
 
-export const getUsetById = async(id)=>{
-  let user = await userModel.findById(id);
-  return user
-}
