@@ -4,9 +4,11 @@ import {
   ErrorResponse,
 } from "../../common/errors/appError.js";
 import { compareHash, generateHash } from "../../common/index.js";
-import { env } from "../../config/env.service.js";
 import { userModel } from "./../../database/model/user.model.js";
-import jwt from "jsonwebtoken";
+import {
+  generateAccessToken,
+  generateToken,
+} from "../../common/services/token.srevice.js";
 export const signUp = async (body) => {
   let { name, email, password, rePassword, age, gender, phone } = body;
   if (password != rePassword) {
@@ -42,8 +44,12 @@ export const signIn = async (body) => {
       hashedPassword: user.password,
     });
     if (isValidPassword) {
-      let token = jwt.sign({ id: user._id }, env.token_key);
-      return token;
+      const { token, refreshToken } = generateToken(user);
+      return {
+        message: "login successfully",
+        token,
+        refreshToken,
+      };
     } else {
       throw BadRequestException({ message: "Invalid password" });
     }
@@ -52,3 +58,14 @@ export const signIn = async (body) => {
   }
 };
 
+export const refreshToken = async (body) => {
+  let { refreshToken } = body;
+
+  const newToken = await generateAccessToken(refreshToken);
+
+  if (newToken) {
+    return { token: newToken };
+  } else {
+    throw BadRequestException({ message: "Invalid refresh token" });
+  }
+};
