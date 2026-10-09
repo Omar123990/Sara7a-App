@@ -1,19 +1,21 @@
 import { Router } from "express";
 import { signIn, signUp, refreshToken } from "./auth.service.js";
+import { signInSchema, signUpSchema } from "./auth.validation.js";
+import { validation } from "../../common/services/validation.service.js";
 
 const router = Router();
 
-router.post("/signup", async (req, res) => {
+router.post("/signup", validation(signUpSchema), async (req, res) => {
   const user = await signUp(req.body);
-  res.status(201).json({ status: "success", user });
+  res.json({ status: "success", user });
 });
-router.post("/signin", async (req, res) => {
+router.post("/signin", validation(signInSchema), async (req, res) => {
   const user = await signIn(req.body);
-  res.status(200).json({ status: "success", user });
+  res.json({ status: "success", user });
 });
-router.post("/refreshToken", async (req, res) => {
-  const data = await refreshToken(req.body);
-  res.status(200).json({ status: "success", data });
+router.post("/refreshToken", (req, res) => {
+  const data = refreshToken(req.body);
+  res.json({ status: "success", data });
 });
 
 export default router;

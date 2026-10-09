@@ -8,7 +8,7 @@ import { userModel } from "./../../database/model/user.model.js";
 import {
   generateAccessToken,
   generateToken,
-} from "../../common/services/token.srevice.js";
+} from "../../common/services/token.service.js";
 export const signUp = async (body) => {
   let { name, email, password, rePassword, age, gender, phone } = body;
   if (password != rePassword) {
@@ -58,10 +58,10 @@ export const signIn = async (body) => {
   }
 };
 
-export const refreshToken = async (body) => {
+export const refreshToken = (body) => {
   let { refreshToken } = body;
 
-  const newToken = await generateAccessToken(refreshToken);
+  const newToken = generateAccessToken(refreshToken);
 
   if (newToken) {
     return { token: newToken };
