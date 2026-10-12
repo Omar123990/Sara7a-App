@@ -10,6 +10,6 @@ export const signUpSchema = z.strictObject({
   password: z.string().min(8).max(32),
   rePassword: z.string().min(8).max(32),
   age: z.number().min(18).max(100),
-  gender: z.string().min(3).max(32),
+  gender: z.string(),
   phone: z.string().min(8).max(32),
 });

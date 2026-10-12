@@ -22,3 +22,11 @@ export const searchUser = async (quary) => {
   }
   return user;
 };
+
+export const getAllUsers = async () => {
+  const users = await userModel.find();
+  if (users.length === 0) {
+    throw BadRequestException({ message: "No users found" });
+  }
+  return users;
+};

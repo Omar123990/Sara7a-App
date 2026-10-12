@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { signIn, signUp, refreshToken } from "./auth.service.js";
+import { signIn, signUp, refreshToken, verifyEmail } from "./auth.service.js";
 import { signInSchema, signUpSchema } from "./auth.validation.js";
 import { validation } from "../../common/services/validation.service.js";
 
@@ -17,5 +17,8 @@ router.post("/refreshToken", (req, res) => {
   const data = refreshToken(req.body);
   res.json({ status: "success", data });
 });
-
+router.post("/verifyEmail", async (req, res) => {
+  const data = await verifyEmail(req.body);
+  res.json({ status: "success", data });
+});
 export default router;
