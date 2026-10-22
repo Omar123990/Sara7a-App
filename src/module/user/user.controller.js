@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { getAllUsers, getUserById, searchUser } from "./user.service.js";
+import { getAllUsers, getUserById, searchUser, uploadProfileImage } from "./user.service.js";
 import { auth } from "../../common/services/token.service.js";
 import { checkRoles } from "../../common/services/checkRoles.js";
+import { upload } from "../../common/meddelWares/multer.js";
 
 const router = Router();
 
@@ -17,4 +18,13 @@ router.get("/get-all-users", auth, checkRoles(["1"]), async (req, res) => {
   const data = await getAllUsers();
   res.json({ status: "success", data });
 });
+router.post(
+  "/upload-profile-image",
+  upload.single("image"),
+  auth,
+  async (req, res) => {
+    const data = await uploadProfileImage(req.user.id, req.file);
+    res.json({ status: "success", data });
+  },
+);
 export default router;

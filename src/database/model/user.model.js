@@ -32,7 +32,7 @@ const userSchema = new Schema(
       default: roleEnum.user,
     },
     phone: {
-      type: Number,
+      type: String,
       required: true,
     },
     provider: {
@@ -49,9 +49,6 @@ const userSchema = new Schema(
     isVerified: {
       type: Boolean,
       default: false,
-    },
-    otp: {
-      type: String,
     },
   },
   {

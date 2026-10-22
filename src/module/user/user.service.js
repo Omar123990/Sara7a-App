@@ -30,3 +30,13 @@ export const getAllUsers = async () => {
   }
   return users;
 };
+
+export const uploadProfileImage = async (id, image) => {
+  let user = await userModel.findById(id);
+  if (!user || !image) {
+    throw BadRequestException({ message: "user not found" });
+  }
+  user.profileImg = `uploads/${image.filename}`;
+  await user.save();
+  return user;
+};

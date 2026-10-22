@@ -9,7 +9,7 @@ export const signUpSchema = z.strictObject({
   email: z.string().email(),
   password: z.string().min(8).max(32),
   rePassword: z.string().min(8).max(32),
-  age: z.number().min(18).max(100),
+  age: z.coerce.number().min(18).max(100),
   gender: z.string(),
   phone: z.string().min(8).max(32),
 });

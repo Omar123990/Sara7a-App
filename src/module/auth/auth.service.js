@@ -11,6 +11,7 @@ import {
   generateToken,
 } from "../../common/services/token.service.js";
 import { sendEmail } from "../../common/services/sendEmail.js";
+import { get, set } from "../../database/redis/redis.service.js";
 export const signUp = async (body) => {
   let { name, email, password, rePassword, age, gender, phone } = body;
   if (password != rePassword) {
@@ -30,12 +31,12 @@ export const signUp = async (body) => {
         age,
         gender,
         phone,
-        otp,
       });
+      await set(`otp::${user._id}`, otp, 5 * 60);
       await sendEmail({
         to: user.email,
         subject: "Verify your email",
-        html: `<h1>Your OTP is: ${user.otp}</h1>`,
+        html: `<h1>Your OTP is: ${otp}</h1>`,
       });
       return user;
     } else {
@@ -88,10 +89,11 @@ export const verifyEmail = async (body) => {
   if (!user) {
     throw BadRequestException({ message: "user not found" });
   }
-  if(user.isVerified) {
+  if (user.isVerified) {
     throw BadRequestException({ message: "Email already verified" });
   }
-  if (user.otp !== otp) {
+  let redisOTP = await get(`otp::${user._id}`);
+  if (redisOTP !== otp) {
     throw BadRequestException({ message: "Invalid OTP" });
   }
   user.isVerified = true;
