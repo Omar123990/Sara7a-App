@@ -4,6 +4,9 @@ import { BadRequestException } from "../errors/appError.js";
 
 export const auth = (req, res, next) => {
   let [flag, token] = req.headers.authorization.split(" ");
+  if (!req.headers.authorization) {
+    throw BadRequestException({ message: "token not found" });
+  }
   switch (flag) {
     case "Basic":
       const basicData = Buffer.from(token, "base64").toString();

@@ -3,6 +3,7 @@ import { env } from "./config/env.service.js";
 import { databaseConnection } from "./database/connection.js";
 import authRouter from "./module/auth/auth.controller.js";
 import userRouter from "./module/user/user.controller.js";
+import messageRouter from "./module/message/message.controller.js";
 import { fileURLToPath } from "url";
 import path from "path";
 import { redisConnection } from "./database/redis/redis.connection.js";
@@ -11,6 +12,7 @@ const app = express();
 app.use(express.json());
 app.use("/user", userRouter);
 app.use("/auth", authRouter);
+app.use("/message", messageRouter);
 databaseConnection();
 export const client = await redisConnection();
 

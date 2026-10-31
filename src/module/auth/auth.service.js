@@ -13,7 +13,8 @@ import {
 import { sendEmail } from "../../common/services/sendEmail.js";
 import { get, set } from "../../database/redis/redis.service.js";
 export const signUp = async (body) => {
-  let { name, email, password, rePassword, age, gender, phone } = body;
+  let { name, email, password, rePassword, age, gender, phone, uniqueName } =
+    body;
   if (password != rePassword) {
     throw BadRequestException({ message: "Password not match" });
   }
@@ -21,6 +22,10 @@ export const signUp = async (body) => {
   if (exsistedEmail) {
     throw ConflictException({ message: "Email already exists" });
   } else {
+    let userData = await userModel.findOne({ uniqueName });
+    if (!userData) {
+      throw ConflictException({ message: "there is no uniqueName" });
+    }
     let otp = Math.floor(Math.random() * 1000000);
     const hashedPassword = await generateHash({ planText: password });
     if (hashedPassword) {
@@ -31,6 +36,7 @@ export const signUp = async (body) => {
         age,
         gender,
         phone,
+        uniqueName,
       });
       await set(`otp::${user._id}`, otp, 5 * 60);
       await sendEmail({
