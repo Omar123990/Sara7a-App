@@ -16,8 +16,7 @@ router.get("/get-all-messages", auth, checkRoles(["1"]), async (req, res) => {
   let data = await getAllMessages();
   res.json(data);
 });
-//validation(messageSchema)
-router.post("/send-message", upload().single("image"), async (req, res) => {
+router.post("/send-message", validation(messageSchema),upload().single("image"), async (req, res) => {
   let data = await sendMessage(req.body, req.file);
   res.status(201).json({ message: "message sent successfully", data });
 });
@@ -34,8 +33,5 @@ router.get("/get-user-messages", auth, async (req, res) => {
   res.json(data);
 });
 
-// router.put("/update-user", auth, upload().single("image"), async (req, res) => {
-//   let data = updateUser(req.body, req.file, req.user);
-//   res.json(data);
-// });
+
 export default router;

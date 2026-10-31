@@ -55,4 +55,3 @@ export const getUserMessages = async (user) => {
   return messages;
 };
 
-// export const updateUser = async(body, file, user)=>{}

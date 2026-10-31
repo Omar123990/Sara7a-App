@@ -1,5 +1,12 @@
 import { Router } from "express";
-import { getAllUsers, getUserById, searchUser, uploadProfileImage } from "./user.service.js";
+import {
+  getAllUsers,
+  getUserById,
+  searchUser,
+  uploadProfileImage,
+  updateUser,
+  deleteUser,
+} from "./user.service.js";
 import { auth } from "../../common/services/token.service.js";
 import { checkRoles } from "../../common/services/checkRoles.js";
 import { upload } from "../../common/meddelWares/multer.js";
@@ -27,4 +34,12 @@ router.post(
     res.json({ status: "success", data });
   },
 );
+router.put("/update-user", auth, upload.single("image"), async (req, res) => {
+  const data = await updateUser(req.body, req.file, req.user);
+  res.json({ status: "success", data });
+});
+router.delete("/delete-user", auth, async (req, res) => {
+  await deleteUser(req.user);
+  res.json({ status: "success", message: "user deleted successfully" });
+});
 export default router;

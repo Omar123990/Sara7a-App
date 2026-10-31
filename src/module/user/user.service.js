@@ -40,3 +40,36 @@ export const uploadProfileImage = async (id, image) => {
   await user.save();
   return user;
 };
+
+export const updateUser = async (body, file, userData) => {
+  const user = await getUserById(userData.id);
+  const fields = ["name", "uniqueName", "age", "gender", "phone"];
+  let hasUpdates = false;
+
+  for (const field of fields) {
+    if (body[field] !== undefined) {
+      user[field] = body[field];
+      hasUpdates = true;
+    }
+  }
+
+  if (file) {
+    user.profileImg = `uploads/${file.filename}`;
+    hasUpdates = true;
+  }
+
+  if (!hasUpdates) {
+    throw BadRequestException({ message: "no user data to update" });
+  }
+
+  await user.save();
+  return user;
+};
+
+export const deleteUser = async (userData) => {
+  const user = await userModel.findByIdAndDelete(userData.id);
+  if (!user) {
+    throw BadRequestException({ message: "user not found" });
+  }
+  return user;
+};
