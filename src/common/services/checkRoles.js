@@ -4,7 +4,7 @@ import { UnauthorizedException } from "../errors/appError.js";
 export const checkRoles = (roles) => {
   return async (req, res, next) => {
     let userData = await userModel.findById(req.user.id);
-    if (userData.role.includes(roles)) {
+    if (userData && roles.includes(String(userData.role))) {
       next();
     } else {
       return UnauthorizedException({ message: "You are not authorized" });

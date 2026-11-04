@@ -1,20 +1,32 @@
 import jwt from "jsonwebtoken";
 import { env } from "../../config/env.service.js";
-import { BadRequestException } from "../errors/appError.js";
+import {
+  BadRequestException,
+  UnauthorizedException,
+} from "../errors/appError.js";
 
 export const auth = (req, res, next) => {
-  let [flag, token] = req.headers.authorization.split(" ");
-  if (!req.headers.authorization) {
-    throw BadRequestException({ message: "token not found" });
+  const authorization = req.headers.authorization;
+  if (!authorization) {
+    throw UnauthorizedException({ message: "token not found" });
+  }
+
+  const [flag, token] = authorization.split(" ");
+  if (!token) {
+    throw BadRequestException({ message: "Invalid authorization header" });
   }
   switch (flag) {
     case "Basic":
       const basicData = Buffer.from(token, "base64").toString();
       let [email, password] = basicData.split(":");
       req.user = { email, password };
+      next();
       break;
     case "Bearer":
       let decodedData = jwt.decode(token);
+      if (!decodedData || typeof decodedData !== "object") {
+        throw BadRequestException({ message: "Invalid token" });
+      }
       let signature;
       switch (decodedData.aud) {
         case env.adminAud:
@@ -24,6 +36,9 @@ export const auth = (req, res, next) => {
           signature = env.userTokenKey;
           break;
       }
+      if (!signature) {
+        throw BadRequestException({ message: "Invalid token audience" });
+      }
       const decoded = jwt.verify(token, signature);
       if (decoded) {
         req.user = decoded;
@@ -32,6 +47,8 @@ export const auth = (req, res, next) => {
         return BadRequestException({ message: "Invalid token" });
       }
       break;
+    default:
+      throw BadRequestException({ message: "Invalid authorization type" });
   }
 };
 
